@@ -2,6 +2,8 @@ const request = require('request'); //http request
 
 const yargs = require('yargs');
 
+const geocode = require('./geocode/geocode.js');
+
 var argv = yargs
     .options({
         a : {
@@ -14,31 +16,27 @@ var argv = yargs
     .help()
     .alias('help','h')
     .argv;
+
 debugger;
-    var encodedAddress = encodeURIComponent(argv.address);
-    console.log(encodedAddress);
+geocode.geocodeAddress(argv.address,(errorMessage, results)=>{
 
-request({ //request(object, callback)
-    url:`https://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}&key=AIzaSyA-S7iQtSY1nyhTK8Mp9ja5lfgsgxcUFN0`,
-    json: true
-}, (error, response, body)=>{
-
-    if(error){
-        console.log('Unable to connect to Server');
-    }else if(body.status === 'ZERO_RESULTS'){
-        console.log('Address not found');
-    }else if(body.status === 'OK'){
-
-        console.log(`Address   : ${body.results[0].formatted_address}`);
-        console.log(`Latitude  : ${body.results[0].geometry.location.lat}`);
-        console.log(`Longitude : ${body.results[0].geometry.location.lng}`);
-       
+    if(errorMessage){
+        console.log(errorMessage);
+    }else{
+        console.log(JSON.stringify(results, undefined, 2));
     }
-
-    // console.log(JSON.stringify(response, undefined, 2));
-    
-
 });
 
 console.log('synchro');
 
+request({
+    url:`https://api.darksky.net/forecast/d6f20ccf041b865f413fea1e602d9bdf/5.954346699999999,80.5479982`,
+    json: true
+}, (error, response, body)=>{
+
+    if(!error && response.statusCode === 200){
+    console.log(`Temperature : ${body.currently.temperature}F`);
+    }else{
+        console.log('couldnt read weather');
+    }
+});
