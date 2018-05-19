@@ -4,6 +4,8 @@ const yargs = require('yargs');
 
 const geocode = require('./geocode/geocode.js');
 
+const weather = require('./weather/weather.js');
+
 var argv = yargs
     .options({
         a : {
@@ -23,20 +25,22 @@ geocode.geocodeAddress(argv.address,(errorMessage, results)=>{
     if(errorMessage){
         console.log(errorMessage);
     }else{
-        console.log(JSON.stringify(results, undefined, 2));
+        // console.log(JSON.stringify(results, undefined, 2));
+        weather.getWeather(results.latitude, results.longitude, (errorMessage, wresults)=>{
+            if(errorMessage){
+                console.log(errorMessage);
+            }else{
+                console.log(`Temperature : ${wresults.temp}F`);
+                console.log(`Summary : ${wresults.sum}`);
+                
+            }
+       
+        });
+       
+       
     }
 });
 
-console.log('synchro');
 
-request({
-    url:`https://api.darksky.net/forecast/d6f20ccf041b865f413fea1e602d9bdf/5.954346699999999,80.5479982`,
-    json: true
-}, (error, response, body)=>{
 
-    if(!error && response.statusCode === 200){
-    console.log(`Temperature : ${body.currently.temperature}F`);
-    }else{
-        console.log('couldnt read weather');
-    }
-});
+ 
