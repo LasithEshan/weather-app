@@ -7,7 +7,7 @@ const yargs = require('yargs');
 var argv = yargs
     .options({
         a : {
-            demand      : true,
+            demand      : false,
             alias       : 'address',
             describe    : 'enter your location address',
             string:true
@@ -16,10 +16,15 @@ var argv = yargs
     .help()
     .alias('help','h')
     .argv;
+if(argv.address === undefined){
+    argv.address = 'walpola matara Sri Lanka';
+}
 
 debugger;
 var encodedAddress = encodeURIComponent(argv.address);
 var geocodeURL = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}&key=AIzaSyA-S7iQtSY1nyhTK8Mp9ja5lfgsgxcUFN0`;
+console.log(geocodeURL);
+
 
 axios.get(geocodeURL).then((response) => {
     
